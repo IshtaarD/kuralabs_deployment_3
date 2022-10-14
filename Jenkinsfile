@@ -12,6 +12,18 @@ pipeline {
         flask run &
         '''
      }
+     post{
+        success { 
+          slackSend channel: 'jenkinsnotifications',
+                    color: 'good',
+                    message: "The build completed successfully."
+        }
+        failure  {
+          slackSend channel: 'jenkinsnotifications',
+                    color: 'warning',
+                    message: "The build FAILED"
+        }   
+     }   
    }
     stage ('test') {
       steps {
@@ -25,8 +37,17 @@ pipeline {
         always {
           junit 'test-reports/results.xml'
         }
-       
-      }
+        success { 
+          slackSend channel: 'jenkinsnotifications',
+                    color: 'good',
+                    message: "The test completed successfully."
+        }
+        failure  {
+          slackSend channel: 'jenkinsnotifications',
+                    color: 'warning',
+                    message: "The test FAILED"
+        }   
+      }  
     }
     stage ('Clean') {
         agent{label 'awsDeploy'}
@@ -50,6 +71,17 @@ pipeline {
             pip install gunicorn
             python3 -m gunicorn -w 4 application:app -b 0.0.0.0 --daemon
             '''
+        }
+        post{
+         success { 
+          slackSend channel: 'jenkinsnotifications',
+                    color: 'good',
+                    message: "The application has been successfully deployed."
+        }
+        failure  {
+          slackSend channel: 'jenkinsnotifications',
+                    color: 'warning',
+                    message: "The application did not deploy successfully"
         }
       } 
     } 
