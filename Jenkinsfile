@@ -72,6 +72,7 @@ pipeline {
             python3 -m gunicorn -w 4 application:app -b 0.0.0.0 --daemon
             '''
         }
+       }
         post{
          success { 
           slackSend channel: 'jenkinsnotifications',
@@ -83,8 +84,7 @@ pipeline {
                     color: 'warning',
                     message: "The application did not deploy successfully"
         }
-      } 
-    } 
-  }
+      }  
+    }
  }
 }
